@@ -1,0 +1,39 @@
+<div class="alumnos-abm-container">
+    <form [formGroup]="alumnoForm" (ngSubmit)="onSubmit()" class="alumno-form">
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="nombre">
+        <mat-error *ngIf="alumnoForm.get('nombre')?.touched && alumnoForm.get('nombre')?.errors?.['required']">
+          Nombre es requerido
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Apellido</mat-label>
+        <input matInput formControlName="apellido">
+        <mat-error *ngIf="alumnoForm.get('apellido')?.touched && alumnoForm.get('apellido')?.errors?.['required']">
+          Apellido es requerido
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email">
+        <mat-error *ngIf="alumnoForm.get('email')?.touched && (alumnoForm.get('email')?.errors?.['required'] || alumnoForm.get('email')?.errors?.['email'])">
+          Ingrese un email válido
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Curso</mat-label>
+        <input matInput formControlName="curso">
+        <mat-error *ngIf="alumnoForm.get('curso')?.touched && alumnoForm.get('curso')?.errors?.['required']">
+            Curso es requerido
+          </mat-error>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" type="submit" [disabled]="!alumnoForm.valid">Guardar</button>
+      <button mat-button type="button" (click)="cancel()">Cancelar</button>
+      <button mat-raised-button color="warn" *ngIf="editing" (click)="deleteAlumno()">Eliminar</button>
+    </form>
+  </div>

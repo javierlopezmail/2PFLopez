@@ -1,0 +1,23 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #sidenav mode="side" opened="true">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/listado-alumnos">Listado de Alumnos</a>
+        <a mat-list-item routerLink="/alta-alumno">Alta de Alumno</a>
+        <a mat-list-item routerLink="/listado-cursos">Listado de Cursos</a>
+        <a mat-list-item routerLink="/alta-curso">Alta de Curso</a>
+        <a mat-list-item routerLink="/listado-clases">Listado de Clases</a>
+        <a mat-list-item routerLink="/alta-clase">Alta de Clases</a>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <mat-toolbar appFontSize color="primary">
+        <button mat-icon-button (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        Gestión de Alumnos
+      </mat-toolbar>
+      <div class="content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>

@@ -1,0 +1,23 @@
+  <div class="curso-abm-container">
+    <form [formGroup]="cursosForm" (ngSubmit)="onSubmit()" class="cursos-form">
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre del Curso</mat-label>
+        <input matInput formControlName="nombre">
+        <mat-error *ngIf="cursosForm.get('nombre')?.touched && cursosForm.get('nombre')?.errors?.['required']">
+          Nombre es requerido
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Costo</mat-label>
+        <input matInput formControlName="costo">
+        <mat-error *ngIf="cursosForm.get('costo')?.touched && cursosForm.get('costo')?.errors?.['required']">
+          Costo es requerido
+        </mat-error>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" type="submit" [disabled]="!cursosForm.valid">Guardar</button>
+      <button mat-button type="button" (click)="cancel()">Cancelar</button>
+      <button mat-raised-button color="warn" *ngIf="editing" (click)="deleteCurso()">Eliminar</button>
+    </form>
+  </div>  

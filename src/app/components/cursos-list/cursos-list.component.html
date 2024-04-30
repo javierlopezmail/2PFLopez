@@ -1,0 +1,31 @@
+<div class="cursos-list-container">
+    <h2>Lista de Cursos</h2>
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+        <mat-cell *matCellDef="let curso"> {{ curso.id }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> Nombre del Curso </th>
+        <td mat-cell *matCellDef="let curso"> {{ curso.nombre }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="costo">
+        <th mat-header-cell *matHeaderCellDef> Costo </th>
+        <td mat-cell *matCellDef="let curso"> {{ curso.costo | currency }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
+        <mat-cell *matCellDef="let curso">
+          <button mat-button color="primary" (click)="editCurso(curso.id)">Editar</button>
+          <button mat-button color="warn" (click)="deleteCurso(curso.id)">Eliminar</button>
+        </mat-cell>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </mat-table>
+  </div>
