@@ -1,37 +1,57 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Clase } from '../models/clase';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClaseService {
-  private clasesSource = new BehaviorSubject<Clase[]>([]);
-  private clases$ = this.clasesSource.asObservable();
+  private clases: Clase[] = [
+    { 
+      id: 1, 
+      horaInicio: '20:00', 
+      duracion: 2, 
+      curso: { id: 1, nombre: 'Angular', costo: 300 },
+      alumnos: [] 
+    }
+  ];
+  private clasesSubject: BehaviorSubject<Clase[]> = new BehaviorSubject(this.clases);
 
   constructor() {}
 
   getClases(): Observable<Clase[]> {
-    return this.clases$;
+    return this.clasesSubject.asObservable();
   }
 
-  addClase(clase: Clase): void {
-    const currentClases = this.clasesSource.value;
-    const updatedClases = [...currentClases, clase];
-    this.clasesSource.next(updatedClases);
+  addClase(clase: Clase): Observable<Clase> {
+    this.clases.push(clase);
+    this.clasesSubject.next(this.clases);
+    return of(clase);
   }
 
-  updateClase(updatedClase: Clase): void {
-    const currentClases = this.clasesSource.value;
-    const clases = currentClases.map(clase => {
-      return clase.id === updatedClase.id ? updatedClase : clase;
-    });
-    this.clasesSource.next(clases);
+  updateClase(clase: Clase): Observable<Clase> {
+    const index = this.clases.findIndex(a => a.id === clase.id);
+    if (index !== -1) {
+      this.clases[index] = clase;
+      this.clasesSubject.next(this.clases);
+      return of(clase);
+    }
+    throw new Error('Clase no encontrada');
   }
 
-  deleteClase(id: number): void {
-    const currentClases = this.clasesSource.value;
-    const filteredClases = currentClases.filter(clase => clase.id !== id);
-    this.clasesSource.next(filteredClases);
+  deleteClase(id: number): Observable<boolean> {
+    const index = this.clases.findIndex(a => a.id === id);
+    if (index !== -1) {
+      this.clases = this.clases.filter(a => a.id !== id);
+      this.clasesSubject.next(this.clases);
+      return of(true);
+    }
+    throw new Error('Clase no encontrada');
+  }
+
+  getClaseById(id: number): Clase | undefined {
+    let clase = this.clases.find(clase => clase.id == id); 
+    return clase;
   }
 }
+

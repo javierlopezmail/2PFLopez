@@ -1,23 +1,29 @@
-<div class="clases-list-container">
-    <h2>Lista de Clases</h2>
-    <mat-table [dataSource]="clases$ | async" class="mat-elevation-z8">
-  
-      <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef> Nombre de la Clase </th>
-        <td mat-cell *matCellDef="let clase"> {{ clase.curso.nombre }} </td>
+  <div class="clase-container">
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+        <mat-cell *matCellDef="let clase"> {{ clase.id }} </mat-cell>
       </ng-container>
-  
       <ng-container matColumnDef="horaInicio">
-        <th mat-header-cell *matHeaderCellDef> Hora de Inicio </th>
-        <td mat-cell *matCellDef="let clase"> {{ clase.horaInicio }} </td>
+        <mat-header-cell *matHeaderCellDef> Hora Inicio </mat-header-cell>
+        <mat-cell *matCellDef="let clase"> {{ clase.horaInicio }} </mat-cell>
       </ng-container>
-  
       <ng-container matColumnDef="duracion">
-        <th mat-header-cell *matHeaderCellDef> Duración (Horas) </th>
-        <td mat-cell *matCellDef="let clase"> {{ clase.duracion }} </td>
+        <mat-header-cell *matHeaderCellDef> Duración </mat-header-cell>
+        <mat-cell *matCellDef="let clase"> {{ clase.duracion }} </mat-cell>
       </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <ng-container matColumnDef="curso">
+        <mat-header-cell *matHeaderCellDef> Curso </mat-header-cell>
+        <mat-cell *matCellDef="let clase"> {{ clase.curso?.nombre }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="acciones">
+        <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
+        <mat-cell *matCellDef="let clase">
+          <button mat-button color="primary" (click)="editClase(clase.id)">Editar</button>
+          <button mat-button color="warn" (click)="deleteClase(clase.id)">Eliminar</button>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
   </div>

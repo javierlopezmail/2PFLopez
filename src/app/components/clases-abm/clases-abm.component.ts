@@ -1,55 +1,105 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { CursoService } from '../../services/curso.service';
-import { AlumnoService } from '../../services/alumno.service';
-import { Curso } from '../../models/curso';
-import { Alumno } from '../../models/alumno';
+import { ClaseService } from '../../services/clase.service';
+import { Clase } from '../../models/clase';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-clase-abm',
-  templateUrl: './clase-abm.component.html',
-  styleUrls: ['./clase-abm.component.scss']
+  templateUrl: './clases-abm.component.html',
+  styleUrls: ['./clases-abm.component.scss']
 })
 export class ClasesABMComponent implements OnInit {
   claseForm: FormGroup;
-  cursos$: Observable<Curso[]>;
-  alumnos$: Observable<Alumno[]>;
-  editMode: boolean = false;  // Assumed flag to toggle edit mode, based on input or route
+  editing = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private cursoService: CursoService,
-    private alumnoService: AlumnoService
-  ) {}
-
-  ngOnInit(): void {
-    this.cursos$ = this.cursoService.getCursos();
-    this.alumnos$ = this.alumnoService.getAlumnos();
-
+  constructor(private fb: FormBuilder, private claseService: ClaseService, private route: ActivatedRoute,
+    private router: Router, private snackBar: MatSnackBar) {
     this.claseForm = this.fb.group({
-      cursoId: ['', Validators.required],
+      id: [null],
       horaInicio: ['', Validators.required],
-      duracion: ['', [Validators.required, Validators.min(1)]],
-      alumnos: [[]] // Start with an empty array for alumnos
+      duracion: ['', Validators.required],
+      curso: ['', Validators.required]
     });
-
-    // If in edit mode, load existing data into form
-    if (this.editMode) {
-      this.loadExistingData();
-    }
   }
 
-  loadExistingData(): void {
-    // Logic to load existing class details into the form
-    // Example: this.claseForm.patchValue({ ... });
+  ngOnInit() {
+    this.route.params.subscribe(params => {
+      const claseId = params['id'];
+      if (claseId) {
+        this.loadClaseData(claseId);
+        this.editing = true;
+      }
+    });
   }
 
   onSubmit(): void {
-    if (this.claseForm.valid) {
-      const claseData = this.claseForm.value;
-      console.log('Clase Data:', claseData);
-      // Further logic to submit the data
+    const claseData: Clase = this.claseForm.value;
+    if (claseData.id) {
+      this.claseService.updateClase(claseData).subscribe({
+        next: () => {
+          this.snackBar.open('Clase actualizada exitosamente', 'Cerrar', { duration: 3000 });
+        },
+        error: () => {
+          this.snackBar.open('Error al actualizar la clase', 'Cerrar', { duration: 3000 });
+        }
+      });
+    } else {
+      this.claseService.addClase(claseData).subscribe({
+        next: () => {
+          this.snackBar.open('Clase añadida exitosamente', 'Cerrar', { duration: 3000 });
+          this.clearForm();
+        },
+        error: () => {
+          this.snackBar.open('Error al añadir la clase', 'Cerrar', { duration: 3000 });
+        }
+      });
+    }
+  }
+
+  deleteClase(): void {
+    if (this.editing && this.claseForm.value.id) {
+        this.claseService.deleteClase(this.claseForm.value.id).subscribe({
+            next: () => {
+                this.snackBar.open('Clase eliminada exitosamente', 'Cerrar', { duration: 3000 });
+                this.clearForm();
+            },
+            error: () => {
+                this.snackBar.open('Error al eliminar la alumno', 'Cerrar', { duration: 3000 });
+            }
+        });
+    }
+  }
+
+  clearForm(): void {
+    this.claseForm.reset();
+    this.editing = false;
+    
+    Object.keys(this.claseForm.controls).forEach(key => {
+        this.claseForm.get(key)?.markAsPristine();
+        this.claseForm.get(key)?.markAsUntouched();
+    });
+  }
+
+  cancel(): void {
+    this.clearForm();
+  }
+
+  setAlumno(clase: Clase): void {
+    this.claseForm.setValue(clase);
+    this.editing = true;
+  }
+
+  loadClaseData(id: number) {
+    const clase = this.claseService.getClaseById(id);
+    if (clase != undefined){
+        this.claseForm.setValue({
+            id: clase.id,
+            horaInicio: clase.horaInicio,
+            duracion: clase.duracion,
+            curso: clase.curso
+          });
     }
   }
 }

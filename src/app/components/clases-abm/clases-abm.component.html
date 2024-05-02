@@ -1,54 +1,40 @@
-<div>
-    <h2>{{ editMode ? 'Editar Clase' : 'Crear Clase' }}</h2>
-    <form [formGroup]="claseForm" (ngSubmit)="onSubmit()">
-      
-      <!-- Campo para el nombre del curso -->
-      <mat-form-field appearance="fill">
-        <mat-label>Curso</mat-label>
-        <mat-select formControlName="cursoId">
-          <mat-option *ngFor="let curso of cursos$ | async" [value]="curso.id">
-            {{ curso.nombre }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-  
-      <!-- Campo para la hora de inicio -->
-      <mat-form-field appearance="fill">
-        <mat-label>Hora de inicio (HH:mm)</mat-label>
-        <input matInput formControlName="horaInicio" placeholder="Ej. 15:00">
-        <mat-error *ngIf="claseForm.get('horaInicio').errors?.['required']">
-          La hora de inicio es requerida
+<div class="clases-abm-container">
+  <form [formGroup]="claseForm" (ngSubmit)="onSubmit()" class="clase-form">
+    <mat-form-field appearance="fill">
+      <mat-label>Curso</mat-label>
+      <input matInput formControlName="curso">
+      <mat-error *ngIf="claseForm.get('curso')?.touched && claseForm.get('curso')?.errors?.['required']">
+        Curso es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Hora Inicio</mat-label>
+      <input matInput formControlName="horaInicio">
+      <mat-error *ngIf="claseForm.get('horaInicio')?.touched && claseForm.get('horaInicio')?.errors?.['required']">
+        HoraInicio es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Duración</mat-label>
+      <input matInput formControlName="duracion" type="duracion">
+      <mat-error *ngIf="claseForm.get('duracion')?.touched && (claseForm.get('duracion')?.errors?.['required'] || alumnoForm.get('duracion')?.errors?.['duracion'])">
+        Ingrese una duración válida
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Curso</mat-label>
+      <input matInput formControlName="curso">
+      <mat-error *ngIf="claseForm.get('curso')?.touched && claseForm.get('curso')?.errors?.['required']">
+          Curso es requerido
         </mat-error>
-      </mat-form-field>
-  
-      <!-- Campo para la duración en horas -->
-      <mat-form-field appearance="fill">
-        <mat-label>Duración en horas</mat-label>
-        <input matInput type="number" formControlName="duracion" min="1">
-        <mat-error *ngIf="claseForm.get('duracion').errors?.['required']">
-          La duración es requerida
-        </mat-error>
-        <mat-error *ngIf="claseForm.get('duracion').errors?.['min']">
-          La duración debe ser al menos 1 hora
-        </mat-error>
-      </mat-form-field>
-  
-      <!-- Selector múltiple para alumnos -->
-      <mat-form-field appearance="fill">
-        <mat-label>Alumnos</mat-label>
-        <mat-select formControlName="alumnos" multiple>
-          <mat-option *ngFor="let alumno of alumnos$ | async" [value]="alumno.id">
-            {{ alumno.nombre }} {{ alumno.apellido }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-  
-      <!-- Botones de acción -->
-      <div class="actions">
-        <button mat-raised-button color="primary" type="submit">
-          {{ editMode ? 'Actualizar' : 'Crear' }}
-        </button>
-        <button mat-button [routerLink]="['/clases']">Cancelar</button>
-      </div>
-    </form>
-  </div>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="!claseForm.valid">Guardar</button>
+    <button mat-button type="button" (click)="cancel()">Cancelar</button>
+    <button mat-raised-button color="warn" *ngIf="editing" (click)="deleteClase()">Eliminar</button>
+  </form>
+</div>
+
